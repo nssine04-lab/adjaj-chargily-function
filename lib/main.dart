@@ -4,15 +4,25 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 Future<dynamic> main(final context) async {
+  // Get both API keys like your working app
   final apiKey = Platform.environment['CHARGILY_API_KEY'];
+  final appKey = Platform.environment['CHARGILY_APP_KEY'];
   final userId = context.req.headers['x-appwrite-user-id'];
 
-  // Validate API key
+  // Validate both API keys
   if (apiKey == null || apiKey.isEmpty) {
     context.error('CHARGILY_API_KEY is not configured');
     return context.res.json({
       'success': false,
-      'error': 'Payment service configuration error',
+      'error': 'Payment service configuration error - API key missing',
+    }, 500);
+  }
+
+  if (appKey == null || appKey.isEmpty) {
+    context.error('CHARGILY_APP_KEY is not configured');
+    return context.res.json({
+      'success': false,
+      'error': 'Payment service configuration error - App key missing',
     }, 500);
   }
 
@@ -31,7 +41,8 @@ Future<dynamic> main(final context) async {
     final response = await http.post(
       Uri.parse('https://pay.chargily.net/test/api/v2/checkouts'),
       headers: {
-        'Authorization': 'Bearer $apiKey',
+        'Authorization': 'Bearer $apiKey', // Use API key for authorization
+        'X-App-Key': appKey, // Use app key as additional header
         'Content-Type': 'application/json',
       },
       body: jsonEncode({
