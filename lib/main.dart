@@ -29,7 +29,7 @@ Future<dynamic> main(final context) async {
     context.log('Plan: $planType - Amount: $amount DZD');
 
     final response = await http.post(
-      Uri.parse('https://pay.chargily.net/test/api/v2'),
+      Uri.parse('https://pay.chargily.net/test/api/v2/checkouts'),
       headers: {
         'Authorization': 'Bearer $apiKey',
         'Content-Type': 'application/json',
